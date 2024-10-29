@@ -26,6 +26,8 @@ model_name = "sentence-transformers/all-MiniLM-L6-v2"
 embeddings = OpenAIEmbeddings(api_key=openai_api_key)
 openai_llm = ChatOpenAI( model="gpt-4o",
                         temperature=0.7,
+                        presence_penalty=0.6,  
+                        frequency_penalty=0.4,
                         max_tokens=8192
                        )
 # groq_llm = ChatGroq(model="llama3-70b-8192", api_key=groq_api_key, temperature=0.2)
