@@ -1,4 +1,4 @@
-from prompts import general_prompt, contextualize_q_system_prompt, book_assistant_prompt
+from prompts import general_prompt, contextualize_q_system_prompt
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores import FAISS
@@ -54,7 +54,7 @@ history_aware_retriever = create_history_aware_retriever(
 
 qa_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", book_assistant_prompt),
+        ("system", general_prompt),
         MessagesPlaceholder("chat_history"),
         ("human", "{input}"),
     ]
