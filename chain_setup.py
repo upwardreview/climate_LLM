@@ -25,7 +25,9 @@ hf_token = os.getenv("HF_TOKEN")
 model_name = "sentence-transformers/all-MiniLM-L6-v2"
 embeddings = OpenAIEmbeddings(api_key=openai_api_key)
 openai_llm = ChatOpenAI( model="gpt-4o",
-                        temperature=0.2)
+                        temperature=0.2,
+                        max_tokens=3000
+                       )
 # groq_llm = ChatGroq(model="llama3-70b-8192", api_key=groq_api_key, temperature=0.2)
 vector_store_name = "context_for_book"
 
