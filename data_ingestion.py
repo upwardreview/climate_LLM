@@ -374,17 +374,13 @@ class DocumentProcessor:
 
         transcripts = []
 
-        # Use ProcessPoolExecutor to transcribe each chunk in parallel
+        # Use ThreadPoolExecutor to transcribe each chunk in parallel
         with ThreadPoolExecutor() as executor:
-            # Submit all transcriptions tasks to the pool
-            futures = {
-                executor.submit(self.transcribe_chunk, os.path.join(output_dir, chunk_filename)): chunk_filename
-                for chunk_filename in sorted(os.listdir(output_dir))
-            }
-            
-            # Collect results as they complete
-            for future in as_completed(futures):
-                transcripts.append(future.result())
+            # Submit all transcription tasks in sorted order and collect results in the same order
+            transcripts = list(executor.map(
+                lambda chunk_filename: self.transcribe_chunk(os.path.join(output_dir, chunk_filename)),
+                sorted(os.listdir(output_dir))
+            ))
 
         os.rmdir(output_dir)  # Remove the chunks directory after all transcriptions are done
         return " ".join(transcripts)
