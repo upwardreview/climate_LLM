@@ -1,4 +1,4 @@
-from prompts import general_prompt, contextualize_q_system_prompt
+from prompts import general_prompt, contextualize_q_system_prompt, general_prompt
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores import FAISS
@@ -18,20 +18,14 @@ filterwarnings("ignore")
 load_dotenv()
 
 dl = DocumentProcessor("./data/")
-groq_api_key =  os.getenv("GROQ_TOKEN")
 openai_api_key =  os.getenv("OPENAI_API_KEY")
-hf_token = os.getenv("HF_TOKEN")
 
-model_name = "sentence-transformers/all-MiniLM-L6-v2"
 embeddings = OpenAIEmbeddings(api_key=openai_api_key)
 openai_llm = ChatOpenAI( model="gpt-4o",
                         temperature=0.7,
-                        presence_penalty=0.6,  
-                        frequency_penalty=0.4,
                         max_tokens=8192
                        )
 # groq_llm = ChatGroq(model="llama3-70b-8192", api_key=groq_api_key, temperature=0.2)
-vector_store_name = "context_for_book"
 
 # Load vector store
 print("loading vector store")

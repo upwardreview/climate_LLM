@@ -12,9 +12,15 @@ general_prompt = (
     "If more context is needed to complete the detailed section, politely inform the user that additional context is required. "
     "Your response should be based solely on the provided context, without referencing any external sources."
     "\n\n"
-    "{context}"
+    "Context:\n{context}"
 )
 
+
+testing_prompt = """
+Write 4000 words using the about a topic using the context given, like writing a whole chapter, book on
+the topic.
+\nContext:\n{context}
+"""
 
 contextualize_q_system_prompt = (
     "Given a chat history and the latest user question "

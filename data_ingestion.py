@@ -276,7 +276,7 @@ class DocumentProcessor:
             self.vector_store.add_documents(documents=chunks, ids=ids)
             print("Document processing and vector store update complete.")
 
-    def get_podcasts(self):
+    def get_podcasts(self, rss_url):
         """
         Fetches podcasts from an RSS feed and extracts MP3 URLs.
         
@@ -287,7 +287,7 @@ class DocumentProcessor:
         list: A list of dictionaries with new podcast details including title, published date, and MP3 URL.
         """
         print("Getting RSS Feed")
-        feed = feedparser.parse(self.rss_url)
+        feed = feedparser.parse(rss_url)
         new_podcasts = []
 
         for entry in feed.entries:
@@ -402,14 +402,14 @@ class DocumentProcessor:
         documents = [Document(page_content=chunk, metadata={"source": podcast_id}) for chunk in chunks]
         self.vector_store.add_documents(documents=documents, ids=[f"{podcast_id}_chunk_{i}" for i in range(len(documents))])
 
-    def process_and_add_new_podcasts(self, latest_n=-1):
+    def process_and_add_new_podcasts(self, rss_url, latest_n=-1):
         """
         Main method to retrieve, process, and add new podcasts from RSS feed.
         """
         print("Fetching podcasts from RSS feed...")
         st.success("Fetching podcasts from RSS feed...")
-        podcasts = self.get_podcasts()
-
+        rss_url = rss_url if rss_url else self.rss_url 
+        podcasts = self.get_podcasts(rss_url)
         podcast_ids = [podcast["title"] for podcast in podcasts]
         st.success("Checking dupes for podcasts")
         existing_ids = self.check_existing_docs_by_id(podcast_ids)

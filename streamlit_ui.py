@@ -5,6 +5,7 @@ from data_ingestion import DocumentProcessor
 # Title for the app
 st.title("AI Assistant")
 with st.sidebar:
+    rss_url = st.text_input("Enter podcast rss feed url")
     index_name = st.text_input("Enter the pincone index name:", value="test").strip()
     folder_id = st.text_input("Enter the folder id found on folder id in gdrive.").strip()
     latest_n = st.number_input("Latest number of podcasts to be ingested. -1 means all podcasts.", value=10)
@@ -36,8 +37,8 @@ if ingest:
         with st.sidebar:
             st.error("Enter folder ID and index name")
 if podcast:
-    if latest_n and index_name:
-        st.session_state.processor.process_and_add_new_podcasts(latest_n)
+    if latest_n and index_name and rss_url:
+        st.session_state.processor.process_and_add_new_podcasts(latest_n, rss_url=rss_url)
         with st.sidebar:
             if st.button("Stop ingestion"):
                 st.stop()
@@ -79,7 +80,7 @@ def process_message():
         except Exception as e:
             st.session_state.conversation_history.append({
                 "role": "assistant",
-                "content": "Error generating response.",
+                "content": f"Error generating response.: {e}",
                 "sources": "Null"
             })
             print(f"Error occurred: {e}")
@@ -111,7 +112,8 @@ for idx, message in enumerate(st.session_state.conversation_history):
         st.markdown(title, unsafe_allow_html=True)
         st.markdown(f'{style}{message_html}', unsafe_allow_html=True)
         if role == "assistant":
-            st_copy_to_clipboard(message["content"])
+            st_copy_to_clipboard(message["content"], 
+                                 key=idx)
 
 # Use a text_area for user input and store its value in 'submitted_input'
 user_input = st.text_area(
