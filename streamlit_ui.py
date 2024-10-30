@@ -38,7 +38,7 @@ if ingest:
             st.error("Enter folder ID and index name")
 if podcast:
     if latest_n and index_name and rss_url:
-        st.session_state.processor.process_and_add_new_podcasts(latest_n, rss_url=rss_url)
+        st.session_state.processor.process_and_add_new_podcasts( rss_url=rss_url, latest_n=latest_n)
         with st.sidebar:
             if st.button("Stop ingestion"):
                 st.stop()
