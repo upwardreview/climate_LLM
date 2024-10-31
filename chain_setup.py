@@ -36,7 +36,7 @@ except:
     print("Vector database not found. Creating vector database. This might take some time")
 
 else:
-    retriever = vector_store.as_retriever(search_kwargs={"k":150})
+    retriever = vector_store.as_retriever(search_kwargs={"k":10})
     print("loaded successfully")
 
 contextualize_q_prompt = ChatPromptTemplate.from_messages(
