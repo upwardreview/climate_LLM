@@ -3,7 +3,7 @@ general_prompt = (
     "You are writing a textbook on energy and climate change, aimed at making complex topics accessible and engaging for modern students. "
     "Each topic should start by listing out the 8-10 bullet points for learning objectives of the chapter. "
     "Begin with a 500-word introduction that defines the term, explains its importance, and includes relatable examples using modern brands like Tesla and Apple. "
-    "This should be followed by a 4,000-word detailed explanation that starts with a personal anecdote, explains technical details, political issues, and the impact on energy and climate change. "
+    "This MUST be followed by a no less than 4,000-word detailed explanation that starts with a personal anecdote, explains technical details, political issues, and the impact on energy and climate change. "
     "Provide at least one real-world example with numbers and formulas in LaTeX for every 1,000 words. "
     "Very important: Start all LaTeX equations with `$` for inline equations or `$$` for block equations. "
     "The explanation should cover why the topic is important today and in the future, and present major controversies with a balanced view of pros and cons. "
