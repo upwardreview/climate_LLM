@@ -1,13 +1,14 @@
 DIRECTORY_PATH = "./data/"
 INDEX_NAME = "test"
 
-import io
+import io 
 import json
 import os
+import zipfile
 import streamlit as st
 import feedparser
 from langchain_core.documents import Document
-from langchain_community.document_loaders import PyMuPDFLoader, Docx2txtLoader
+from langchain_community.document_loaders import PyMuPDFLoader, Docx2txtLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from pinecone import Pinecone, ServerlessSpec
@@ -17,7 +18,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
 from warnings import filterwarnings
 from moviepy.editor import AudioFileClip
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from pydub import AudioSegment
 import unicodedata
 from openai import OpenAI
@@ -193,6 +194,8 @@ class DocumentProcessor:
                 loader = PyMuPDFLoader(file_path=downloaded_path)
             elif file_name.endswith(".docx"):
                 loader = Docx2txtLoader(file_path=downloaded_path)
+            elif file_name.endswith(".txt"):
+                loader = TextLoader(file_path=downloaded_path)
             else:
                 print(f"Unsupported file format: {file_name}")
                 continue
@@ -224,7 +227,7 @@ class DocumentProcessor:
 
     def process_and_add_documents_from_local(self):
         """
-        Process new PDF and DOCX documents from the directory and add them to Pinecone.
+        Process new PDF and DOCX and Text documents from the directory and add them to Pinecone.
         Only new documents (not already in Pinecone) are processed.
         """
         # Step 1: Get all PDF and DOCX file paths from the directory and its subdirectories
@@ -255,6 +258,8 @@ class DocumentProcessor:
             elif file_path.endswith(".docx"):
                 loader = Docx2txtLoader(file_path=file_path)
                 print(f"Processing DOCX: {file_path}")
+            elif file_path.endswith(".txt"):
+                loader = TextLoader(file_path=file_path)
             else:
                 print(f"Unsupported file format: {file_path}")
                 continue
@@ -398,7 +403,7 @@ class DocumentProcessor:
         documents = [Document(page_content=chunk, metadata={"source": podcast_id}) for chunk in chunks]
         self.vector_store.add_documents(documents=documents, ids=[f"{podcast_id}_chunk_{i}" for i in range(len(documents))])
 
-    def process_and_add_new_podcasts(self, rss_url, latest_n=-1):
+    def process_and_add_new_podcasts(self, rss_url, latest_n=-1, download=False):
         """
         Main method to retrieve, process, and add new podcasts from RSS feed.
         """
@@ -411,17 +416,49 @@ class DocumentProcessor:
         existing_ids = self.check_existing_docs_by_id(podcast_ids)
         new_podcasts = [podcast for podcast in podcasts if podcast['title'] not in existing_ids][:latest_n]
         print(new_podcasts)
+        transcripts = []
         if new_podcasts:
             st.success("New podcasts found.")
-            for podcast in new_podcasts:
+            for idx, podcast in enumerate(new_podcasts, start=1):
                 podcast_id = podcast["title"]
                 st.info("Making transcription..for {}".format(podcast_id))
                 print(podcast_id)
                 transcript = self.process_podcast_audio(podcast["mp3_url"])
-                self.add_podcast_to_index(podcast_id, transcript)
-                st.success(f"Podcast '{podcast_id}' processed and added to Pinecone.")
+                if not download:
+                    self.add_podcast_to_index(podcast_id, transcript)
+                    st.success(f"Podcast '{podcast_id}' processed and added to Pinecone. {idx} out of {latest_n}")
+                else:
+                    transcripts.append((podcast_id,transcript))
+            if download:
+                self.create_zip_download(transcripts)
         else:
             st.success("No new podcasts to be ingested")
+    
+    @st.fragment
+    def create_zip_download(self, transcripts):
+        """
+        Creates a zip file for all transcripts and provides a download button in Streamlit.
+        """
+        # Create a BytesIO buffer to hold the zip file in memory
+        zip_buffer = io.BytesIO()
+
+        # Create a zip file and add each transcript
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            for podcast_id, transcript in transcripts:
+                # Create a text file for each transcript inside the zip file
+                transcript_filename = f"{podcast_id}.txt"
+                zf.writestr(transcript_filename, transcript)
+        
+        # Seek to the beginning of the BytesIO buffer so it can be read
+        zip_buffer.seek(0)
+
+        # Provide a download button in Streamlit for the zip file
+        st.download_button(
+            label="Download All Transcripts as ZIP",
+            data=zip_buffer,
+            file_name="transcripts.zip",
+            mime="application/zip"
+        )
     
 # Example usage:
 if __name__ == "__main__": ## TESTING ##    
