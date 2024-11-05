@@ -1,4 +1,4 @@
-from prompts import general_prompt, contextualize_q_system_prompt, book_assistant_prompt
+from prompts import general_prompt, contextualize_q_system_prompt
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores import FAISS
@@ -28,7 +28,7 @@ class ConversationalRAG:
         
         self.contextualize_q_prompt = self.create_prompt(contextualize_q_system_prompt)
         self.history_aware_retriever = self.create_history_aware_retriever()
-        self.qa_prompt = self.create_prompt(book_assistant_prompt)
+        self.qa_prompt = self.create_prompt(general_prompt)
         self.question_answer_chain = self.create_question_answer_chain()
         self.rag_chain = self.create_retrieval_chain()
         self.conversational_rag_chain = self.create_conversational_chain()
