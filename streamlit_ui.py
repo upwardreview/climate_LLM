@@ -54,8 +54,7 @@ elif ingest:
 
 ## Podcasts
 if podcast and latest_n and index_name and rss_url:
-    if download:
-        st.session_state.processor.process_and_add_new_podcasts(rss_url=rss_url, latest_n=latest_n, download=download)
+    st.session_state.processor.process_and_add_new_podcasts(rss_url=rss_url, latest_n=latest_n, download=download)
 else:
     if podcast:
         with st.sidebar:
