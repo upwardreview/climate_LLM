@@ -22,8 +22,7 @@ openai_api_key =  os.getenv("OPENAI_API_KEY")
 
 embeddings = OpenAIEmbeddings(api_key=openai_api_key)
 openai_llm = ChatOpenAI( model="gpt-4o",
-                        temperature=0.7,
-                        max_tokens=8192
+                        temperature=0.7
                        )
 # groq_llm = ChatGroq(model="llama3-70b-8192", api_key=groq_api_key, temperature=0.2)
 
@@ -36,7 +35,7 @@ except:
     print("Vector database not found. Creating vector database. This might take some time")
 
 else:
-    retriever = vector_store.as_retriever(search_kwargs={"k":10})
+    retriever = vector_store.as_retriever(search_kwargs={"k":30})
     print("loaded successfully")
 
 contextualize_q_prompt = ChatPromptTemplate.from_messages(
