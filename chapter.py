@@ -17,7 +17,7 @@ from prompts import (
 
 class ChapterGenerator:
     def __init__(self, model="gpt-4o", temperature=0.2):
-        self.llm = ChatOpenAI(model=model, temperature=temperature)
+        self.llm = ChatOpenAI(api_key=st.secrets['OPENAI_API_KEY'],model=model, temperature=temperature)
         self.dp = DocumentProcessor()
         self.markdown_output = ""
 
