@@ -28,6 +28,7 @@ class ChapterGenerator:
 
     def get_context(self, user_input):
         context = self.dp.vector_store.similarity_search(user_input, k=100)
+        self.sources = list(set([document.metadata['source'] for document in context]))
         return "\n\n".join([doc.page_content for doc in context])
 
 
@@ -49,37 +50,37 @@ class ChapterGenerator:
         # Introduction & Basics
         introduction = self.generate_section(introduction_prompt, formatted_context)
         self.add_to_output("1. Introduction & Basics (with Anecdote)", introduction)
-        st.info("Introduction & Basics (with Anecdote)")
+        st.info("Introduction & Basics (with Anecdote) Done")
         print("Introduction & Basics Completed")
 
         # History & Development
         history = self.generate_section(history_development_prompt, formatted_context, previous_section_text=introduction)
         self.add_to_output("2. History & Development", history)
-        st.info("History & Development")
+        st.info("History & Development Done")
         print("History & Development Completed")
 
         # Technical & Operational Details
         technical = self.generate_section(technical_details_prompt, formatted_context, previous_section_text=history)
         self.add_to_output("3. Technical & Operational Details", technical)
-        st.info("Technical & Operational Details")
+        st.info("Technical & Operational Details Done")
         print("Technical & Operational Details Completed")
 
         # Economic & Geopolitical Considerations
         economic = self.generate_section(economic_geopolitical_prompt, formatted_context, previous_section_text=technical)
         self.add_to_output("4. Economic & Geopolitical Considerations", economic)
-        st.info("Economic & Geopolitical Considerations")
+        st.info("Economic & Geopolitical Considerations Done")
         print("Economic & Geopolitical Considerations Completed")
 
         # Controversies, Environmental Impact & Social Perspectives
         controversies = self.generate_section(controversies_impact_prompt, formatted_context, previous_section_text=economic)
         self.add_to_output("5. Controversies, Environmental Impact & Social Perspectives", controversies)
-        st.info("Controversies, Environmental Impact & Social Perspectives")
+        st.info("Controversies, Environmental Impact & Social Perspectives Done")
         print("Controversies, Environmental Impact & Social Perspectives Completed")
 
         # Future Outlook & Innovations
         future = self.generate_section(future_outlook_prompt, formatted_context, previous_section_text=controversies)
         self.add_to_output("6. Future Outlook & Innovations", future)
-        st.info("Future Outlook & Innovations")
+        st.info("Future Outlook & Innovations Done")
         print("Future Outlook & Innovations Completed")
 
         # Multiple-Choice Questions based on the full chapter content
@@ -91,7 +92,7 @@ class ChapterGenerator:
             | StrOutputParser()
         )
         mcqs = mcq_chain.invoke({"context": combined_intro_and_detailed})
-        self.add_to_output("Multiple-Choice Questions", mcqs)
+        self.add_to_output("Multiple-Choice Questions Done", mcqs)
         st.info("### Multiple-Choice Questions\n")
         print("MCQs")
 
@@ -104,6 +105,6 @@ class ChapterGenerator:
         self.create_section_prompts(formatted_context)
         print("Done")
 
-        return self.markdown_output
-
-
+        return self.markdown_output, self.sources
+if __name__ == '__main__':
+    resp = ChapterGenerator().get_context(user_input="Geothermal")

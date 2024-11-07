@@ -8,12 +8,12 @@ st.title("AI Assistant")
 
 # Sidebar inputs for RSS URL, index name, folder ID, and latest podcast number
 with st.sidebar:
-    rss_url = st.text_input("Enter podcast RSS feed URL", value="https://feeds.simplecast.com/XFfCG1w8")
     index_name = st.text_input("Enter the Pinecone index name:", value="test").strip()
     folder_id = st.text_input("Enter the folder ID in Google Drive").strip()
-    latest_n = st.number_input("Latest number of podcasts to be ingested (-1 for all)", value=10)
     k_value = st.slider("Set the value of k (number of documents to retrieve):", 0, 100, value=30)
     download = st.checkbox("Download latest podcasts instead?",value=False)
+    latest_n = st.number_input("Latest number of podcasts to be ingested (-1 for all)", value=10)
+    rss_url = st.text_input("Enter podcast RSS feed URL", value="https://feeds.simplecast.com/XFfCG1w8")
 
     
 

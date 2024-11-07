@@ -46,8 +46,8 @@ technical_details_prompt = ChatPromptTemplate.from_template(
     
     Explain the technical and operational details of this energy source:
     - Describe its mechanics and infrastructure needs, covering aspects like energy conversion, storage, and distribution challenges.
-    - Include real-world examples with numbers and formulas, formatted in LaTeX (`$` for inline equations, `$$` for block equations).
     - Organize sections with headings like "Technical Mechanics" and "Infrastructure Needs."
+    - Include real-world examples with numbers and formulas, formatted in LaTeX (`$` for inline equations, `$$` for block equations).
 
     Important: Base all information strictly on the provided context, with no conclusions.
 
@@ -66,6 +66,7 @@ economic_geopolitical_prompt = ChatPromptTemplate.from_template(
     - Cover aspects like production costs, market potential, and competitiveness.
     - Touch on geopolitical dynamics, including leading countries, supply chains, and international trade aspects.
     - Organize content with headings such as "Economic Viability" and "Global Influence."
+    - Include real-world examples with numbers and formulas, formatted in LaTeX (`$` for inline equations, `$$` for block equations).
 
     Important: Draw only from the provided context, linking technical details to real-world economic and political perspectives.
 
@@ -84,6 +85,7 @@ controversies_impact_prompt = ChatPromptTemplate.from_template(
     - Highlight key debates and ethical concerns, such as environmental risks, waste management, and public perception.
     - Address regulatory frameworks and any incentives influencing the energy source's adoption.
     - Structure the response with headings like "Environmental Concerns," "Public Debate," and "Regulatory Factors."
+    - Include real-world examples with numbers and formulas, formatted in LaTeX (`$` for inline equations, `$$` for block equations).
 
     Important: Ensure a balanced and factual tone, based solely on the provided context.
 
