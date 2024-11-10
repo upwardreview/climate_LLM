@@ -403,7 +403,7 @@ class DocumentProcessor:
         documents = [Document(page_content=chunk, metadata={"source": podcast_id}) for chunk in chunks]
         self.vector_store.add_documents(documents=documents, ids=[f"{podcast_id}_chunk_{i}" for i in range(len(documents))])
 
-    def process_and_add_new_podcasts(self, rss_url, latest_n=-1, download=False):
+    def process_and_add_new_podcasts(self, rss_url, latest_n=-1, download=False, debug=False):
         """
         Main method to retrieve, process, and add new podcasts from RSS feed.
         """
@@ -421,11 +421,19 @@ class DocumentProcessor:
             st.success("New podcasts found.")
             for idx, podcast in enumerate(new_podcasts, start=1):
                 podcast_id = podcast["title"]
-                st.info("Making transcription..for {}".format(podcast_id))
+                st.info("Making transcription..for {}".format(podcast_id if debug else "test" + podcast_id))
                 print(podcast_id)
-                transcript = self.process_podcast_audio(podcast["mp3_url"])
+                print(debug)
+                if not debug:
+                    transcript = self.process_podcast_audio(podcast["mp3_url"])
+                else:
+                    print("processing")
+                    time.sleep(120)
+                    transcript = "Transcript for " + podcast_id
+                    print("done processing")
                 if not download:
-                    self.add_podcast_to_index(podcast_id, transcript)
+                    if not debug:
+                        self.add_podcast_to_index(podcast_id, transcript)
                     st.success(f"Podcast '{podcast_id}' processed and added to Pinecone. {idx} out of {latest_n}")
                 else:
                     transcripts.append((podcast_id,transcript))
@@ -434,7 +442,6 @@ class DocumentProcessor:
         else:
             st.success("No new podcasts to be ingested")
     
-    @st.fragment
     def create_zip_download(self, transcripts):
         """
         Creates a zip file for all transcripts and provides a download button in Streamlit.

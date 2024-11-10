@@ -8,6 +8,7 @@ st.title("AI Assistant")
 
 # Sidebar inputs for RSS URL, index name, folder ID, and latest podcast number
 with st.sidebar:
+    debug = st.checkbox("Debugging mode?",value=False)
     index_name = st.text_input("Enter the Pinecone index name:", value="test").strip()
     folder_id = st.text_input("Enter the folder ID in Google Drive").strip()
     k_value = st.slider("Set the value of k (number of documents to retrieve):", 0, 100, value=30)
@@ -54,7 +55,7 @@ elif ingest:
 
 ## Podcasts
 if podcast and latest_n and index_name and rss_url:
-    st.session_state.processor.process_and_add_new_podcasts(rss_url=rss_url, latest_n=latest_n, download=download)
+    st.session_state.processor.process_and_add_new_podcasts(rss_url=rss_url, latest_n=latest_n, download=download, debug=debug)
 else:
     if podcast:
         with st.sidebar:
